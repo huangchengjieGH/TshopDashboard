@@ -6,8 +6,9 @@
         <el-card v-if="distributor" class="customer-card">
             <div class="customer__wrapper">
                 <div class="customer__wrapper__info">
-                    <div>姓名：{{distributor.customer.name}}</div>
-                    <div>会员号：{{distributor.customer.num}}</div>
+                    <div>姓名：{{distributor.bankAccountOwner}}</div>
+                    <!--<div>银行：{{distributor.bank}}</div>-->
+                    <!--<div>卡号：{{distributor.bankAccount}}</div>-->
                     <div>
                         <span>分成比例：</span>
                         <span class="text-warning size-md">{{distributor.profit}}%</span>
@@ -17,7 +18,7 @@
                     <div>银行账号：{{distributor.bankAccount}}</div>
                     <div>户主姓名：{{distributor.bankAccountOwner}}</div>
                 </div>
-                <el-button  @click="prevShowEditModal()" size="small" type="success">编辑</el-button>
+                <el-button @click="prevShowEditModal()" size="small" type="success">编辑</el-button>
             </div>
         </el-card>
         <el-card>
@@ -99,6 +100,7 @@
         name: 'distributor-detail',
         data() {
             return {
+                name: 0,
                 tabIndex: 0,
                 page: 1,
                 pageSize: 10,
@@ -109,12 +111,13 @@
                     remark: '',
                     bank: '',
                     bankAccount: '',
-                    bankAccountOwner: '',
+                    bankAccountOwner: ''
                 },
                 distributorId: null,
                 showEditModal: false,
                 profitList: [],
                 withdrawList: [],
+                profitCount: 0,
                 profitTableConfig: [
                     {
                         label: '订单号',
@@ -186,6 +189,9 @@
                 const that = this;
                 let distributor = new Distributor({id: that.distributorId});
                 distributor.get().then(res => {
+
+                    console.log('getDistributor')
+                    console.log(res.data.data)
                     that.distributor = res.data.data;
                     that.distributor.profit = that.distributor.profit * 100;
                 });
