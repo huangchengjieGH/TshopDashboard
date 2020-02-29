@@ -93,7 +93,7 @@
 </template>
 
 <script>
-    import Distributor from '@/tool/classFactory/Distributor.js';
+    import Distributor from '@/tool/classFactory/distributor.js';
     import myTable from '@/common/m-table.vue';
 
     export default {
