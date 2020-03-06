@@ -93,6 +93,14 @@ export const otherRouter = {
             component: resolve => {
                 require(['./yyt/distributor/detail.vue'], resolve);
             }
+        },
+        {
+            path: 'evaluate/edit',
+            title: '估价详情',
+            name: 'evaluate-edit',
+            component: resolve => {
+                require(['./yyt/evaluate/edit.vue'], resolve);
+            }
         }
     ]
 };
@@ -248,6 +256,25 @@ export const appRouter = [
                 name: 'distributor-list',
                 component: resolve => {
                     require(['./yyt/distributor/list.vue'], resolve);
+                }
+            }
+        ]
+    },
+    {
+        path: '/evaluate',
+        icon: 'android-folder',
+        name: 'evaluate',
+        title: '估价管理',
+        role: 'admin',
+        show: true,
+        component: Main,
+        children: [
+            {
+                path: 'list',
+                title: '估价管理',
+                name: 'evaluate-list',
+                component: resolve => {
+                    require(['./yyt/evaluate/list.vue'], resolve);
                 }
             }
         ]

@@ -60,6 +60,14 @@
                         img: 'imgUrl'
                     },
                     {
+                        label: '类型',
+                        property: 'style'
+                    },
+                    {
+                        label: 'url',
+                        property: 'url'
+                    },
+                    {
                         label: '排序',
                         property: 'seq',
                     },
@@ -123,9 +131,17 @@
             },
 
             filterADList(list) {
-                list.sort((x, y) => {
-                    return x.seq - y.seq;
-                });
+                for (var idx in list) {
+                    if (list[idx].openType == 1) {
+                        list[idx].style = '小程序内部链接';
+                    } else if (list[idx].openType == 2) {
+                        list[idx].style = '外部链接';
+                    } else if (list[idx].openType == 3) {
+                        list[idx].style = '外部小程序';
+                    } else {
+                        list[idx].style = '无链接';
+                    }
+                }
             },
 
             getADList() {

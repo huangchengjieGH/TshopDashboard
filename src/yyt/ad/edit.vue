@@ -25,7 +25,7 @@
                                         </el-upload>
                                     </div>
 
-                                    <p class="text-grey">建议图片长宽比2:1</p>
+                                    <p class="text-grey">建议640*640像素</p>
                                     <p class="ptb-sm" style="font-size: 14px;line-height: 1.4em;}">
                                         <span>填写标题</span>&nbsp;&nbsp;
                                         <input v-model="row.title"
@@ -49,37 +49,38 @@
                                         <span>删除</span>
                                     </el-button>
                                 </div>
+
                             </div>
                             <div class="row" style="margin-top: 10px;">
                                 <div class="col-md-2 text-right">图片链接</div>
                                 <div class="col-md-9">
-                                    <el-radio-group v-model="row.relateType" @change="whichChange02"
+                                    <el-radio-group v-model="row.openType" @change="whichChange02"
                                                     style="padding: 4px 20px 20px 10px;">
-                                        <!--<el-radio style="margin-left:20px;" class="radio"  :label="4">小程序链接</el-radio>-->
-                                        <!--<el-radio style="margin-left:20px;"  :label="3">外部链接</el-radio>-->
-                                        <!--<el-radio style="margin-left:20px;" :label="2" v-show="row.relateType === 2">-->
-                                        <!--系统链接-->
-                                        <!--</el-radio>-->
-                                        <el-radio style="margin-left:20px;" :label="1" v-show="row.relateType !== 2">
+                                        <el-radio style="margin-left:20px;" class="radio" :label="3">小程序链接</el-radio>
+                                        <el-radio style="margin-left:20px;" :label="2">外部链接</el-radio>
+                                        <el-radio style="margin-left:20px;" :label="1" >
                                             系统链接
                                         </el-radio>
+                                        <!--<el-radio style="margin-left:20px;" :label="1" v-show="row.openType !== 2">-->
+                                        <!--系统链接-->
+                                        <!--</el-radio>-->
                                         <el-radio style="margin-left:20px;" :label="0">无链接</el-radio>
                                     </el-radio-group>
                                     <div class="mt12">
 
-                                        <div v-if="(row.relateType === 1 || row.relateType === 2)">
-                                            <el-button :disabled="row.relateType !== 1 && row.relateType !== 2"
-                                                       @click="isShowDialog">选择链接
-                                            </el-button>
-                                            <span class="text-info" v-if="row.name">{{row.name}}</span>
-                                        </div>
+                                        <!--<div v-if="row.openType === 1">-->
+                                        <!--<el-button-->
+                                        <!--@click="isShowDialog">选择链接-->
+                                        <!--</el-button>-->
+                                        <!--<span class="text-info" v-if="row.name">{{row.name}}</span>-->
+                                        <!--</div>-->
 
-                                        <div v-if="row.relateType === 3|| row.relateType === 4" style="width: 60%;">
+                                        <div v-if="row.openType === 3|| row.openType === 2 || row.openType === 1" style="width: 60%;">
                                             <el-input class="p12" style="margin: 0 0 20px 20px;"
-                                                      v-if="row.relateType === 4" @change="whichChange"
+                                                      v-if="row.openType === 3" @change="whichChange"
                                                       placeholder="请输入小程序AppId" v-model="row.appId"></el-input>
                                             <el-input class="p12" style="margin: 0 0 20px 20px;" @change="whichChange"
-                                                      :placeholder="row.relateType === 3 ? '请输入外部链接' : '请输入小程序路径'"
+                                                      :placeholder="row.openType === 3 ? '请输入小程序路径' : '请输入链接'"
                                                       v-model="row.url"></el-input>
                                         </div>
                                     </div>
@@ -112,21 +113,126 @@
                                            class="el-icon-search"></el-button>
                             </el-input>
                         </div>
-                        <my-table :data="goods" :config="tableConfig">
-                            <div slot="operating" slot-scope="obj">
-                                <el-button @click="goodsChoose(obj.item.id,obj.item.name)" size="small" type="primary">选择</el-button>
-                            </div>
-                        </my-table>
-                        <div v-if="goods.length" class="text-center p-sm">
-                            <el-pagination
-                                    @current-change="getProductList"
-                                    :current-page.sync="search.page"
-                                    :page-size="search.pageSize"
-                                    layout="total, prev, pager, next, jumper"
-                                    :total="goodsSum">
-                            </el-pagination>
-                        </div>
+                        <el-tabs v-model="type" style="margin-top: 10px;" @tab-click="onTypeTap">
+                            <el-tab-pane
+                                    :key="item.name"
+                                    v-for="(item, index) in classify"
+                                    :label="item.name"
+                                    :name="item.name"
+                            >
+                                {{item.content}}
+                            </el-tab-pane>
+                        </el-tabs>
+                        <table class="editLink-Table" style="margin:20px 0">
+                            <tbody style="text-align: center">
+                            <tr>
+                                <td style="width:102px">图片</td>
+                                <td>名字</td>
+                                <td></td>
+                            </tr>
+                            <tr v-for="item in queryResult" v-if="goods.length && queryName">
+                                <td style="width:102px">
+                                    <div class="editLink-pic"><img :src="item.imageUrl"></div>
+                                </td>
+                                <td style="padding: 0 10px;">{{item.name}}</td>
+                                <td>
+                                    <el-button type="primary" @click="goodsChoose(item.id,item.name)">选择</el-button>
+                                </td>
+                            </tr>
+                            <tr v-for="item in goods" v-if="goods.length && (!queryName)">
+                                <td style="width:102px">
+                                    <div class="editLink-pic"><img :src="item.imageUrl"></div>
+                                </td>
+                                <td style="padding: 0 10px;">{{item.name}}</td>
+                                <td>
+                                    <el-button type="primary" @click="goodsChoose(item.id,item.name)">选择</el-button>
+                                </td>
+                            </tr>
+                            <tr v-if="!goods.length">
+                                <td style="width:102px">
+                                    <div class="editLink-pic"><img src="static/img/demo-banner.jpg" alt="暂无商品"></div>
+                                </td>
+                                <td>暂无商品</td>
+                                <td>
+                                    <el-button type="primary" @click="editLinkDialog = false">选择</el-button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </el-tab-pane>
+
+
+                    <!--<el-tab-pane label="类别选择" name="second">-->
+                    <!--<el-collapse accordion class="editLink-Class">-->
+                    <!--<el-collapse-item>-->
+                    <!--<template slot="title">-->
+                    <!--<span>{{'全部分类'}}</span>-->
+                    <!--<div class="pull-right">-->
+                    <!--<el-button type="primary" @click="classifyChoose('0','全部分类')">选择</el-button>-->
+                    <!--</div>-->
+                    <!--</template>-->
+                    <!--</el-collapse-item>-->
+                    <!--<el-collapse-item v-for="parent in classify">-->
+                    <!--<template slot="title">-->
+                    <!--<span>{{parent.name}}</span>-->
+                    <!--<div class="pull-right">-->
+                    <!--<el-button type="primary" @click="classifyChoose(parent.id,parent.name)">选择</el-button>-->
+                    <!--</div>-->
+                    <!--</template>-->
+                    <!--<div class="subclass" v-for="children in parent.subGoodsClassifies">{{children.name}}-->
+                    <!--<div class="pull-right">-->
+                    <!--<el-button type="primary" @click="classifyChoose(children.id,children.name)">选择</el-button>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</el-collapse-item>-->
+                    <!--</el-collapse>-->
+                    <!--</el-tab-pane>-->
+                    <!---->
+
+                    <!--<el-tab-pane label="图文选择"-->
+                    <!--name="third">-->
+                    <!--<div class="search-pl">-->
+                    <!--<el-input placeholder="输入商品名搜索" v-model="queryName" class="right-search" @change="queryGoods">-->
+                    <!--<el-button slot="append" icon="search" @click="queryGoods"></el-button>-->
+                    <!--</el-input>-->
+                    <!--</div>-->
+                    <!--<table class="editLink-Table">-->
+                    <!--<tbody style="text-align: center">-->
+                    <!--<tr>-->
+                    <!--<td style="width:102px">图片</td>-->
+                    <!--<td>名字</td>-->
+                    <!--<td></td>-->
+                    <!--</tr>-->
+                    <!--<tr v-for="item in queryResult" v-if="picture.length && queryName">-->
+                    <!--<td style="width:102px">-->
+                    <!--<div class="editLink-pic"><img :src="item.imgUrl"></div>-->
+                    <!--</td>-->
+                    <!--<td>{{item.goodsName}}</td>-->
+                    <!--<td>-->
+                    <!--<el-button type="primary" @click="goodsChoose(item.goodsId,item.goodsName)">选择</el-button>-->
+                    <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr v-for="item in picture" v-if="picture.length && (!queryName)">-->
+                    <!--<td style="width:102px">-->
+                    <!--<div class="editLink-pic"><img :src="item.imgUrl"></div>-->
+                    <!--</td>-->
+                    <!--<td>{{item.goodsName}}</td>-->
+                    <!--<td>-->
+                    <!--<el-button type="primary" @click="goodsChoose(item.goodsId,item.goodsName)">选择</el-button>-->
+                    <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr v-if="!goods.length">-->
+                    <!--<td style="width:102px">-->
+                    <!--<div class="editLink-pic"><img src="static/img/girl_fight.jpg" alt="暂无商品"></div>-->
+                    <!--</td>-->
+                    <!--<td>暂无商品</td>-->
+                    <!--<td>-->
+                    <!--<el-button type="primary" @click="editLinkDialog = false">选择</el-button>-->
+                    <!--</td>-->
+                    <!--</tr>-->
+                    <!--</tbody>-->
+                    <!--</table>-->
+                    <!--</el-tab-pane>-->
                 </el-tabs>
             </div>
             <div slot="footer" class="dialog-footer">
@@ -137,10 +243,12 @@
     </div>
 </template>
 <script>
-    import myTable from '@/common/m-table.vue';
+
+    import {rootRoute, fileRoot} from '@/tool/const.js';
     import AD from '@/tool/classFactory/AD.js';
-    import Classify from '@/tool/classFactory/Classify.js';
-    import Product from '@/tool/classFactory/Product.js';
+   // import Classify from '@/tool/classFactory/Classify.js';
+  //  import Article from '@/tool/classFactory/Article.js';
+ //   import Product from '@/tool/classFactory/Product.js';
     export default {
         name: "ad-edit",
         data() {
@@ -148,10 +256,13 @@
                 search: {
                     year: '',
                     name: '',
-                    shopId: '',
+                    classifyId: '',
+                    status: '',
                     page: 1,
-                    pageSize: 10
+                    pageSize: 20
                 },
+                rootRoute,
+                fileRoot,
                 editLinkDialog: false,
                 activeTabs: 'first',
                 queryName: '',
@@ -164,30 +275,7 @@
                     index: 0,
                     tabsel: 'banner'
                 },
-                goodsSum:0,
-                tableConfig: [
-                    {
-                        label: '图片',
-                        property: '',
-                        img: 'images.0.url'
-                    },
-                    {
-                        label: '名称',
-                        property: 'name'
-                    },
-                    {
-                        label: '品牌',
-                        property: 'brand'
-                    },
-                    {
-                        label: '年份',
-                        property: 'year'
-                    },
-                    {
-                        label: '操作',
-                        type: 'operating'
-                    }
-                ],
+                type: '房车',
                 rowsBanner: [
                     {
                         url: '',
@@ -196,7 +284,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        relateType: 1,
+                        openType: 1,
                         relateId: -1,
                         seq: '1',
                         type: 'banner'
@@ -210,7 +298,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        relateType: 0,
+                        openType: 0,
                         relateId: -1,
                     }
                 ],
@@ -222,15 +310,13 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        relateType: 0,
+                        openType: 0,
                         relateId: -1,
                     }
                 ]
             }
         },
-        components: {
-            myTable
-        },
+
         computed: {
             userType: function () {
                 let type = this.$store.state.user.type;
@@ -249,9 +335,9 @@
         },
         activated() {
             console.log('activated');
-            this.adId = +this.$route.query.adId || null;
             this.init();
-            this.getProductList();
+            this.adId = +this.$route.query.adId || null;
+           // this.getProductList();
             if (this.adId) {
                 this.getAd();
             }
@@ -259,7 +345,7 @@
         methods: {
             init() {
                 const that = this;
-                that.rowsBanner = [
+                that.rowsBanner =  [
                     {
                         url: '',
                         title: '',
@@ -267,7 +353,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        relateType: 1,
+                        openType: 1,
                         relateId: -1,
                         seq: '1',
                         type: 'banner'
@@ -275,21 +361,47 @@
                 ]
             },
 
-            getProductList(e) {
-                const that = this;
-                if (e) {
-                    that.search.page = e;
+
+            realLength(tabSel) {
+                let that = this;
+                let rows = [];
+                let length = 0;
+
+                switch (tabSel) {
+                    case 'banner':
+                        rows = that.rowsBanner;
+                        break;
+                    case 'navigator':
+                        rows = that.rowsNavigator;
+                        break;
+                    case 'hot':
+                        rows = that.rowsHot;
+                        break;
                 }
-                let search = that.search;
-                Product.prototype.getShopProduct(search).then(res => {
-                    let list = res.data.data || [];
-                    that.goods.splice(0, that.goods.length, ...list);
-                    that.queryResult.splice(0, that.queryResult.length, ...list);
-                    console.log(that.queryResult);
-                    that.goodsSum = res.data.extra.count || list.length;
-                });
+
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].status !== -1 && rows[i].imgUrl !== '') {
+                        length = length + 1;
+                    }
+                }
+
+                return length;
             },
 
+
+            whichActive(Tabsel) {
+                if (Tabsel === this.current.tabsel) {
+                    return true;
+                }
+
+                if (Tabsel === this.current.tabsel) {
+                    return true;
+                }
+
+                if (Tabsel === this.current.tabsel) {
+                    return true;
+                }
+            },
 
 
             upInit(index) {
@@ -320,13 +432,6 @@
                 if (this.current.tabsel === 'hot') {
                     return '热销';
                 }
-            },
-            goodsChoose(id, name) {
-                let rows = this.wihchTabsel();
-                rows[this.current.index].relateId = id;
-                rows[this.current.index].name = name;
-                rows[this.current.index].relateType = 1;
-                this.editLinkDialog = false
             },
 
 
@@ -394,11 +499,11 @@
                 rows[index].status = 2;
                 console.log(e)
             },
-            whichChange02(e){
+            whichChange02(e) {
                 let rows = this.wihchTabsel();
                 let index = this.current.index;
                 rows[index].status = 2;
-                if(e == 0){
+                if (e == 0) {
                     rows[index].relateId = '';
                 }
                 console.log(e)
@@ -423,6 +528,26 @@
                 return isLt2M;
             },
 
+
+            getClassifyList() {
+                const that = this;
+                Classify.prototype.getList().then(res => {
+                    let list = res.data.data || [];
+                    that.classify.splice(0, that.classify.length, ...list);
+                });
+            },
+
+
+            getProductList() {
+                const that = this;
+                let search = that.search;
+                Product.prototype.getList(search).then(res => {
+                    let list = res.data.data || [];
+                    that.goods.splice(0, that.goods.length, ...list);
+                    console.log(that.goods);
+                    that.queryResult.splice(0, that.queryResult.length, ...list);
+                });
+            },
             getAd() {
                 const that = this;
                 let adId = that.adId;
@@ -436,7 +561,7 @@
                     row.imgUrl = item.imgUrl;
                     row.name = item.name;
                     row.relateId = item.relateId;
-                    row.relateType = item.relateType;
+                    row.openType = item.openType;
                     row.seq = item.seq;
                     row.type = item.type;
                     row.url = item.url;
@@ -462,7 +587,7 @@
                 let rows = this.wihchTabsel();
                 rows[this.current.index].relateId = id;
                 rows[this.current.index].name = name;
-                rows[this.current.index].relateType = 1;
+                rows[this.current.index].openType = 1;
                 this.editLinkDialog = false
             },
 
@@ -478,7 +603,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        relateType: 0,
+                        openType: 0,
                         relateId: -1,
                     });
                 } else {
@@ -509,10 +634,28 @@
                         }
                     });
             },
+
+            onTypeTap() {
+                const that = this;
+                let search = that.search;
+                for (var idx in that.classify) {
+                    if (that.classify[idx].name == that.type) {
+                        search.classifyId = that.classify[idx].id;
+                        Product.prototype.getList(search).then(res => {
+                            let list = res.data.data || [];
+                            that.goods.splice(0, that.goods.length, ...list);
+                            that.queryResult.splice(0, that.queryResult.length, ...list);
+                        });
+
+                    }
+                }
+                console.log(that.type);
+            },
+
             async commit() {
                 const that = this;
                 let rows = that.wihchTabsel();
-
+                console.log(rows)
                 if (rows[0].imgUrl) {
                     let ajax = 'add';
                     let data = rows[0];
@@ -539,11 +682,23 @@
             },
 
             queryGoods() {
-                const that = this
-                that.search.name = this.queryName
-                that.getProductList(1)
-
-
+                this.queryResult.splice(0, this.queryResult.length);
+                let arr = [];
+                console.log(this.activeTabs)
+                console.log(this.queryName)
+                this.search.name = this.queryName
+                this.getProductList()
+                // if (this.activeTabs === 'first') {
+                //     arr = this.goods;
+                // } else {
+                //     arr = this.picture;
+                // }
+                // for (let i = 0; i < arr.length; i++) {
+                //     let index = arr[i].name.indexOf(this.queryName);
+                //     if (index !== -1) {
+                //         this.queryResulst.push(arr[i]);
+                //     }
+                // }
             }
         }
     }
