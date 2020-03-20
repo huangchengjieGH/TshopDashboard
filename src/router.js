@@ -63,14 +63,6 @@ export const otherRouter = {
             }
         },
         {
-            path: 'supplier/edit',
-            title: '新建渠道商',
-            name: 'supplier-edit',
-            component: resolve => {
-                require(['./yyt/supplier/edit.vue'], resolve);
-            }
-        },
-        {
             path: 'showcase/edit',
             title: '橱窗编辑',
             name: 'showcase-edit',
@@ -100,6 +92,14 @@ export const otherRouter = {
             name: 'evaluate-edit',
             component: resolve => {
                 require(['./yyt/evaluate/edit.vue'], resolve);
+            }
+        },
+        {
+            path: 'article/edit',
+            title: '文章详情',
+            name: 'article-edit',
+            component: resolve => {
+                require(['./yyt/article/edit.vue'], resolve);
             }
         }
     ]
@@ -142,6 +142,44 @@ export const appRouter = [
                 name: 'classify-list',
                 component: resolve => {
                     require(['./yyt/classify/list.vue'], resolve);
+                }
+            }
+        ]
+    },
+    {
+        path: '/article',
+        icon: 'android-folder',
+        name: 'article',
+        title: '文章管理',
+        role: 'admin',
+        show: true,
+        component: Main,
+        children: [
+            {
+                path: 'list',
+                title: '分类列表',
+                name: 'article-list',
+                component: resolve => {
+                    require(['./yyt/article/list.vue'], resolve);
+                }
+            }
+        ]
+    },
+    {
+        path: '/articleclassify',
+        icon: 'android-folder',
+        name: 'articleclassify',
+        title: '文章分类',
+        role: 'admin',
+        show: true,
+        component: Main,
+        children: [
+            {
+                path: 'list',
+                title: '分类列表',
+                name: 'articleclassify-list',
+                component: resolve => {
+                    require(['./yyt/articleclassify/list.vue'], resolve);
                 }
             }
         ]
@@ -199,25 +237,6 @@ export const appRouter = [
                 name: 'postage-list',
                 component: resolve => {
                     require(['./yyt/postage/list.vue'], resolve);
-                }
-            }
-        ]
-    },
-    {
-        path: '/supplier',
-        icon: 'android-folder',
-        name: 'supplier',
-        title: '渠道商管理',
-        role: 'admin',
-        show: true,
-        component: Main,
-        children: [
-            {
-                path: 'list',
-                title: '渠道商管理',
-                name: 'supplier-list',
-                component: resolve => {
-                    require(['./yyt/supplier/list.vue'], resolve);
                 }
             }
         ]
