@@ -16,18 +16,18 @@
                             </el-col>
                         </div>
                     </el-row>
-                    <el-row class="y-center ptb-sm">
-                        <el-col :sm="24" :lg="2">价格</el-col>
-                        <el-col :sm="24" :lg="16">
-                            <el-input v-model="price" placeholder="请输入价格"></el-input>
-                        </el-col>
-                    </el-row>
-                    <el-row class="y-center ptb-sm">
-                        <el-col :sm="24" :lg="2">库存</el-col>
-                        <el-col :sm="24" :lg="16">
-                            <el-input v-model="obj.stock" placeholder="请输入库存"></el-input>
-                        </el-col>
-                    </el-row>
+                    <!--<el-row class="y-center ptb-sm">-->
+                        <!--<el-col :sm="24" :lg="2">价格</el-col>-->
+                        <!--<el-col :sm="24" :lg="16">-->
+                            <!--<el-input v-model="price" placeholder="请输入价格"></el-input>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+                    <!--<el-row class="y-center ptb-sm">-->
+                        <!--<el-col :sm="24" :lg="2">库存</el-col>-->
+                        <!--<el-col :sm="24" :lg="16">-->
+                            <!--<el-input v-model="obj.stock" placeholder="请输入库存"></el-input>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
                     <el-row class="y-center ptb-sm">
                         <el-col :sm="24" :lg="2">年份</el-col>
                         <el-col :sm="24" :lg="16">
@@ -434,7 +434,7 @@
                     },
                     {
                         label: '规格',
-                        property: 'specVals'
+                        property: 'subProduct'
                     },
                     {
                         label: '操作',
@@ -647,6 +647,17 @@
                 }else {
                     that.subProducts.push(that.subProduct)
                 }
+
+                var temp = ''
+                for(var idx in that.subProducts){
+                    that.subProducts[idx].subProduct = ''
+                    for(var idx2 in that.subProducts[idx].specVals){
+                        temp = that.subProducts[idx].specVals[idx2].specName+ ':' + that.subProducts[idx].specVals[idx2].name
+                        that.subProducts[idx].subProduct += temp
+                        that.subProducts[idx].subProduct += ';'
+                    }
+                }
+
                 that.subProduct = {
                     'type': '',
                     'stock': '',
@@ -712,6 +723,11 @@
                 let thenObj = null;
                 console.log(that.subProducts)
                 console.log(that.proSpecs)
+
+                for(var idx in that.subProducts){
+                    that.subProducts[idx].price = that.subProducts[idx].price*100
+                }
+
                 that.obj.subProducts = that.subProducts
                 that.obj.specs = that.proSpecs
                 console.log(that.obj)
@@ -794,11 +810,25 @@
                             content: ""
                         }
                     }
-                    that.price = that.obj.price / 100
+                    for(var idx in that.obj.subProducts){
+                        that.obj.subProducts[idx].price = that.obj.subProducts[idx].price/100
+                    }
                     that.imgList = that.obj.images
                     that.imgList = that.obj.images
                     that.imgList.push({})
                     that.subProducts = that.obj.subProducts
+
+                    var temp = ''
+                    for(var idx in that.subProducts){
+                        that.subProducts[idx].subProduct = ''
+                        for(var idx2 in that.subProducts[idx].specVals){
+                            temp = that.subProducts[idx].specVals[idx2].specName+ ':' + that.subProducts[idx].specVals[idx2].name
+                            that.subProducts[idx].subProduct += temp
+                            that.subProducts[idx].subProduct += ';'
+                        }
+                        temp = ''
+                    }
+
                     that.proSpecs = that.obj.specs
                     this.freshproSpecsCopy()
 
