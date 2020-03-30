@@ -54,33 +54,33 @@
                             <div class="row" style="margin-top: 10px;">
                                 <div class="col-md-2 text-right">图片链接</div>
                                 <div class="col-md-9">
-                                    <el-radio-group v-model="row.openType" @change="whichChange02"
+                                    <el-radio-group v-model="row.relateType" @change="whichChange02"
                                                     style="padding: 4px 20px 20px 10px;">
                                         <el-radio style="margin-left:20px;" class="radio" :label="3">小程序链接</el-radio>
                                         <el-radio style="margin-left:20px;" :label="2">外部链接</el-radio>
                                         <el-radio style="margin-left:20px;" :label="1" >
                                             系统链接
                                         </el-radio>
-                                        <!--<el-radio style="margin-left:20px;" :label="1" v-show="row.openType !== 2">-->
+                                        <!--<el-radio style="margin-left:20px;" :label="1" v-show="row.relateType !== 2">-->
                                         <!--系统链接-->
                                         <!--</el-radio>-->
                                         <el-radio style="margin-left:20px;" :label="0">无链接</el-radio>
                                     </el-radio-group>
                                     <div class="mt12">
 
-                                        <!--<div v-if="row.openType === 1">-->
+                                        <!--<div v-if="row.relateType === 1">-->
                                         <!--<el-button-->
                                         <!--@click="isShowDialog">选择链接-->
                                         <!--</el-button>-->
                                         <!--<span class="text-info" v-if="row.name">{{row.name}}</span>-->
                                         <!--</div>-->
 
-                                        <div v-if="row.openType === 3|| row.openType === 2 || row.openType === 1" style="width: 60%;">
+                                        <div v-if="row.relateType === 3|| row.relateType === 2 || row.relateType === 1" style="width: 60%;">
                                             <el-input class="p12" style="margin: 0 0 20px 20px;"
-                                                      v-if="row.openType === 3" @change="whichChange"
+                                                      v-if="row.relateType === 3" @change="whichChange"
                                                       placeholder="请输入小程序AppId" v-model="row.appId"></el-input>
                                             <el-input class="p12" style="margin: 0 0 20px 20px;" @change="whichChange"
-                                                      :placeholder="row.openType === 3 ? '请输入小程序路径' : '请输入链接'"
+                                                      :placeholder="row.relateType === 3 ? '请输入小程序路径' : '请输入链接'"
                                                       v-model="row.url"></el-input>
                                         </div>
                                     </div>
@@ -284,7 +284,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        openType: 1,
+                        relateType: 1,
                         relateId: -1,
                         seq: '1',
                         type: 'banner'
@@ -298,7 +298,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        openType: 0,
+                        relateType: 0,
                         relateId: -1,
                     }
                 ],
@@ -310,7 +310,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        openType: 0,
+                        relateType: 0,
                         relateId: -1,
                     }
                 ]
@@ -353,7 +353,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        openType: 1,
+                        relateType: 1,
                         relateId: -1,
                         seq: '1',
                         type: 'banner'
@@ -561,7 +561,7 @@
                     row.imgUrl = item.imgUrl;
                     row.name = item.name;
                     row.relateId = item.relateId;
-                    row.openType = item.openType;
+                    row.relateType = item.relateType;
                     row.seq = item.seq;
                     row.type = item.type;
                     row.url = item.url;
@@ -587,7 +587,7 @@
                 let rows = this.wihchTabsel();
                 rows[this.current.index].relateId = id;
                 rows[this.current.index].name = name;
-                rows[this.current.index].openType = 1;
+                rows[this.current.index].relateType = 1;
                 this.editLinkDialog = false
             },
 
@@ -603,7 +603,7 @@
                         status: 1,
                         imgUrl: '',
                         appId: '',
-                        openType: 0,
+                        relateType: 0,
                         relateId: -1,
                     });
                 } else {

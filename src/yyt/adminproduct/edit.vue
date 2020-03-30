@@ -114,7 +114,7 @@
 
                         <my-table :data="subProducts" :config="tableConfig02">
                             <div slot="operating" slot-scope="sub">
-                                <el-button @click="editSubProItem(sub.item,sub.index)" size="small" type="success">操作</el-button>
+                                <!--<el-button @click="editSubProItem(sub.item,sub.index)" size="small" type="success">操作</el-button>-->
                                 <el-button @click="deleteSubProItem(sub.item,sub.index)" size="small" type="danger">删除
                                 </el-button>
                             </div>
@@ -221,7 +221,9 @@
                         <span>默认显示:</span>
                         <div class="pro-item-value">
                             <el-radio v-model="subProduct.type" label="1">默认</el-radio>
+                            <el-radio v-model="subProduct.type" label="2">不默认</el-radio>
                         </div>
+
 
                     </div>
 
@@ -697,6 +699,12 @@
             },
             editSubProItem(obj, index){
                 console.log(obj)
+                console.log(obj.type)
+                if(obj.type){
+                    obj.type = obj.type.toString()
+                }
+
+
                 this.modalShow = 2
                 this.subProduct = obj
                 this.editSubProIndex = index

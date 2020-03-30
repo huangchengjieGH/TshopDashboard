@@ -38,6 +38,10 @@
                         property: 'name'
                     },
                     {
+                        label: '序号',
+                        property: 'seq'
+                    },
+                    {
                         label: '操作',
                         type: 'operating'
                     }
