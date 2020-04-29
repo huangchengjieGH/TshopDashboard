@@ -17,16 +17,16 @@
                         </div>
                     </el-row>
                     <!--<el-row class="y-center ptb-sm">-->
-                        <!--<el-col :sm="24" :lg="2">价格</el-col>-->
-                        <!--<el-col :sm="24" :lg="16">-->
-                            <!--<el-input v-model="price" placeholder="请输入价格"></el-input>-->
-                        <!--</el-col>-->
+                    <!--<el-col :sm="24" :lg="2">价格</el-col>-->
+                    <!--<el-col :sm="24" :lg="16">-->
+                    <!--<el-input v-model="price" placeholder="请输入价格"></el-input>-->
+                    <!--</el-col>-->
                     <!--</el-row>-->
                     <!--<el-row class="y-center ptb-sm">-->
-                        <!--<el-col :sm="24" :lg="2">库存</el-col>-->
-                        <!--<el-col :sm="24" :lg="16">-->
-                            <!--<el-input v-model="obj.stock" placeholder="请输入库存"></el-input>-->
-                        <!--</el-col>-->
+                    <!--<el-col :sm="24" :lg="2">库存</el-col>-->
+                    <!--<el-col :sm="24" :lg="16">-->
+                    <!--<el-input v-model="obj.stock" placeholder="请输入库存"></el-input>-->
+                    <!--</el-col>-->
                     <!--</el-row>-->
                     <el-row class="y-center ptb-sm">
                         <el-col :sm="24" :lg="2">年份</el-col>
@@ -114,7 +114,8 @@
 
                         <my-table :data="subProducts" :config="tableConfig02">
                             <div slot="operating" slot-scope="sub">
-                                <!--<el-button @click="editSubProItem(sub.item,sub.index)" size="small" type="success">操作</el-button>-->
+                                <el-button @click="editSubProItem(sub.item,sub.index)" size="small" type="success">操作
+                                </el-button>
                                 <el-button @click="deleteSubProItem(sub.item,sub.index)" size="small" type="danger">删除
                                 </el-button>
                             </div>
@@ -282,7 +283,7 @@
                     </div>
 
                     <div style="display: flex;justify-content: center;align-items: center">
-                        <el-button type="primary" @click="addSubPro">添加</el-button>
+                        <el-button type="primary" @click="addSubPro">确认</el-button>
                     </div>
 
                     <div>
@@ -334,7 +335,7 @@
     import Classify from '@/tool/classFactory/Classify.js';
     import richTextEditor from '@/common/editor.vue';
     import myTable from '@/common/m-table.vue';
-
+    import  Vue from 'vue';
     export default {
         name: 'adminproduct-edit',
         data() {
@@ -356,8 +357,7 @@
                 ],
                 disableInput: false,
                 ImgIndex: 0,
-                proSpecs: [
-                ],
+                proSpecs: [],
                 proSpecsCopy: [],
                 subProduct: {
                     "type": '',
@@ -365,10 +365,10 @@
                     "seq": '',
                     "price": '',
                     "imgUrl": '',
-                    "specVals": []
+                    "specVals": [],
+                    "describe":''
                 },
-                subProducts: [
-                ],
+                subProducts: [],
                 obj: {
                     classify: {
                         id: ''
@@ -389,7 +389,8 @@
                     brand: '',
                     specs: [],
                     subProducts: [],
-                    content: {}
+                    content: {},
+                    describe:''
                 },
                 price: 0.00,
                 showEditModal: false,
@@ -436,7 +437,7 @@
                     },
                     {
                         label: '规格',
-                        property: 'subProduct'
+                        property: 'describe'
                     },
                     {
                         label: '操作',
@@ -486,7 +487,8 @@
                     brand: '',
                     specs: [],
                     subProducts: [],
-                    content: {}
+                    content: {},
+                    subProduct:''
                 };
                 this.proSpecs = []
                 this.subProducts = []
@@ -538,26 +540,26 @@
             handleClose(tag, sindex, vindex) {
                 console.log('handleClose')
                 console.log(tag)
-                console.log(sindex,vindex)
-                const  that = this
+                console.log(sindex, vindex)
+                const that = this
                 var temp = {
-                    name:'',
-                    vals:[]
+                    name: '',
+                    vals: []
                 }
                 var arrayTemp = []
-                for(var idx in that.proSpecs){
+                for (var idx in that.proSpecs) {
                     temp.name = that.proSpecs[idx].name
-                    for(var idx2 in that.proSpecs[idx].vals){
-                        if(idx == sindex && vindex == idx2){
+                    for (var idx2 in that.proSpecs[idx].vals) {
+                        if (idx == sindex && vindex == idx2) {
 
-                        }else {
+                        } else {
                             temp.vals.push(that.proSpecs[idx].vals[idx2])
                         }
                     }
                     arrayTemp.push(temp)
                     temp = {
-                        name:'',
-                        vals:[]
+                        name: '',
+                        vals: []
                     }
                 }
                 console.log('arrayTemp')
@@ -605,7 +607,7 @@
             },
             onSubproChoose(sindex, vindex) {
                 console.log(sindex, vindex)
-
+                const  that = this
                 for (var idx1 in this.proSpecsCopy) {
                     for (var idx2 in this.proSpecsCopy[idx1].vals) {
                         if (idx1 == sindex) {
@@ -618,8 +620,24 @@
 
                     }
                 }
-                this.$forceUpdate();
+
                 console.log(this.proSpecsCopy)
+                console.log(that.subProduct)
+
+                var temp = ''
+                that.subProduct.describe = ''
+                for (var i in that.proSpecsCopy) {
+                    for (var j in that.proSpecsCopy[i].vals) {
+                        if(that.proSpecsCopy[i].vals[j].choosed){
+                            temp = that.proSpecsCopy[i].name + ':' + that.proSpecsCopy[i].vals[j].name
+                            that.subProduct.describe += temp
+                            that.subProduct.describe += ';'
+                        }
+                    }
+                }
+
+                this.$forceUpdate();
+
             },
             addSubPro() {
                 const that = this
@@ -643,29 +661,45 @@
                 }
                 console.log(that.proSpecsCopy)
                 console.log(that.subProduct)
-                if(that.editSubProIndex){
+                console.log(that.editSubProIndex)
+                if (that.editSubProIndex>=0) {
+                    that.subProducts[that.editSubProIndex] = {}
                     that.subProducts[that.editSubProIndex] = that.subProduct
                     that.editSubProIndex = ''
-                }else {
+                } else {
                     that.subProducts.push(that.subProduct)
                 }
 
                 var temp = ''
-                for(var idx in that.subProducts){
-                    that.subProducts[idx].subProduct = ''
-                    for(var idx2 in that.subProducts[idx].specVals){
-                        temp = that.subProducts[idx].specVals[idx2].specName+ ':' + that.subProducts[idx].specVals[idx2].name
-                        that.subProducts[idx].subProduct += temp
-                        that.subProducts[idx].subProduct += ';'
+                var describe = ''
+                var obj = {}
+                for (var idx in that.subProducts) {
+                    that.subProducts[idx].describe = ''
+                    obj = that.subProducts[idx]
+                    for (var idx2 in that.subProducts[idx].specVals) {
+                        temp = that.subProducts[idx].specVals[idx2].specName + ':' + that.subProducts[idx].specVals[idx2].name
+                        describe += temp
+                        describe += ';'
+                        // that.subProducts[idx].describe += temp
+                        // that.subProducts[idx].describe += ';'
                     }
+                    console.log('obj')
+                    console.log(obj)
+                    console.log(describe)
+                    obj.describe = describe
+                    that.subProducts.splice(idx,obj)
+                    describe = ''
+                    // this.$set(that.subProducts[idx],'describe',describe)
+                    // that.subProducts[idx].describe = describe
                 }
-
+                // that.subProducts.splice(that.subProducts.length)
                 that.subProduct = {
                     'type': '',
                     'stock': '',
                     'seq': '',
                     'price': '',
                     'imgUrl': '',
+                    'describe':'',
                     'specVals': [
                         {
                             "specName": "",
@@ -673,11 +707,14 @@
                         }
                     ]
                 }
-                this.showEditModal = false
+                // Vue.$set(vm.subProducts, indexOfItem, newValue)
+                that.$forceUpdate();
+                console.log(that.subProducts)
+                that.showEditModal = false
             },
             deleteSubProItem(obj, index) {
                 const that = this;
-                console.log(obj,index)
+                console.log(obj, index)
                 var arrayTemp = []
                 that.$Modal.confirm({
                     title: '提示',
@@ -697,10 +734,11 @@
                     }
                 });
             },
-            editSubProItem(obj, index){
+            editSubProItem(obj, index) {
                 console.log(obj)
                 console.log(obj.type)
-                if(obj.type){
+                const that = this
+                if (obj.type) {
                     obj.type = obj.type.toString()
                 }
 
@@ -708,6 +746,17 @@
                 this.modalShow = 2
                 this.subProduct = obj
                 this.editSubProIndex = index
+
+                for (var idx in obj.specVals) {
+                    for (var idx2 in that.proSpecsCopy[idx].vals) {
+                        if (that.proSpecsCopy[idx].vals[idx2].name == obj.specVals[idx].name) {
+                            that.proSpecsCopy[idx].vals[idx2].choosed = true;
+                        }else {
+                            that.proSpecsCopy[idx].vals[idx2].choosed = false;
+                        }
+                    }
+                }
+                console.log(that.proSpecsCopy)
                 this.showEditModal = true
 
             },
@@ -732,8 +781,8 @@
                 console.log(that.subProducts)
                 console.log(that.proSpecs)
 
-                for(var idx in that.subProducts){
-                    that.subProducts[idx].price = that.subProducts[idx].price*100
+                for (var idx in that.subProducts) {
+                    that.subProducts[idx].price = that.subProducts[idx].price * 100
                 }
 
                 that.obj.subProducts = that.subProducts
@@ -818,8 +867,8 @@
                             content: ""
                         }
                     }
-                    for(var idx in that.obj.subProducts){
-                        that.obj.subProducts[idx].price = that.obj.subProducts[idx].price/100
+                    for (var idx in that.obj.subProducts) {
+                        that.obj.subProducts[idx].price = that.obj.subProducts[idx].price / 100
                     }
                     that.imgList = that.obj.images
                     that.imgList = that.obj.images
@@ -827,16 +876,16 @@
                     that.subProducts = that.obj.subProducts
 
                     var temp = ''
-                    for(var idx in that.subProducts){
-                        that.subProducts[idx].subProduct = ''
-                        for(var idx2 in that.subProducts[idx].specVals){
-                            temp = that.subProducts[idx].specVals[idx2].specName+ ':' + that.subProducts[idx].specVals[idx2].name
-                            that.subProducts[idx].subProduct += temp
-                            that.subProducts[idx].subProduct += ';'
+                    for (var idx in that.subProducts) {
+                        that.subProducts[idx].describe = ''
+                        for (var idx2 in that.subProducts[idx].specVals) {
+                            temp = that.subProducts[idx].specVals[idx2].specName + ':' + that.subProducts[idx].specVals[idx2].name
+                            that.subProducts[idx].describe += temp
+                            that.subProducts[idx].describe += ';'
                         }
                         temp = ''
                     }
-
+                    that.$forceUpdate();
                     that.proSpecs = that.obj.specs
                     this.freshproSpecsCopy()
 

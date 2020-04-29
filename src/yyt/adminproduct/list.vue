@@ -36,7 +36,7 @@
             <el-radio v-model="search.status" label="1" @change="changeStatus">上架中</el-radio>
             <el-radio v-model="search.status" label="2" @change="changeStatus">下架中</el-radio>
         </div>
-        <my-table :data="objList" :config="tableConfig" @on-name="onNameTap" @on-icon="onIconTap">
+        <my-table :data="objList" :showCheckbox="true" :config="tableConfig" @on-name="onNameTap" @on-icon="onIconTap">
             <div slot="operating" slot-scope="obj">
                 <el-button @click="prevShowEditModal(obj.item,obj.item.status)" icon="el-icon-edit" circle size="small"
                            type="success"></el-button>
@@ -53,7 +53,11 @@
                            type="danger"></el-button>
             </div>
         </my-table>
-        <div v-if="objList.length" class="text-center p-sm">
+        <div v-if="objList.length">
+            <ul class="batch__wrapper">
+                <li @click="unboundMore()">批量下架</li>
+                <li @click="upMoreProduct()">批量上架</li>
+            </ul>
             <el-pagination
                     @current-change="getList"
                     :current-page.sync="search.page"
@@ -139,14 +143,6 @@
                         property: 'sellCount'
                     },
                     {
-                        label: '库存',
-                        property: 'stock'
-                    },
-                    {
-                        label: '自动更新库存',
-                        property: 'autoResetStock'
-                    },
-                    {
                         label: '状态',
                         property: 'flag'
                         // iconUrl: 'https://58yyt.com/file/1558188752489_b33e11eaafab86f30082d9fb78a6fec8.png'
@@ -217,6 +213,79 @@
                 Obj.prototype.setPercent(data).then(res => {
                     // let list = res.data.data || [];
                     that.showEditModal = false;
+                    that.getList();
+                });
+            },
+            unboundMore() {
+                const that = this;
+                that.$Modal.confirm({
+                    title: '提示',
+                    content: '是否执行，请确认',
+                    onOk: () => {
+                        var productIds = []
+                        var temp = {}
+                        let objList = that.objList;
+                        for (let i = 0; i < objList.length; i++) {
+                            let item = objList[i];
+                            if (item.isChoose) {
+                                // temp = {
+                                //     productId: item.id
+                                // };
+                                productIds += item.id;
+                                productIds+=','
+                                // proudctIds.push(item.id)
+                            }
+                        }
+                        productIds = productIds.substring(0,productIds.length - 1)
+                        temp = {
+                            productIds: productIds
+                        }
+                        console.log(temp)
+                       that.downProduct(temp);
+                    }
+                });
+            },
+            downProduct(data, shopId) {
+                const that = this;
+                Obj.prototype.downProduct(data).then(res => {
+                    let list = res.data.data || [];
+                    that.getList();
+                });
+            },
+
+            upMoreProduct() {
+                const that = this;
+                that.$Modal.confirm({
+                    title: '提示',
+                    content: '是否执行，请确认',
+                    onOk: () => {
+                        var productIds = []
+                        var temp = {}
+                        let objList = that.objList;
+                        for (let i = 0; i < objList.length; i++) {
+                            let item = objList[i];
+                            if (item.isChoose) {
+                                // temp = {
+                                //     productId: item.id
+                                // };
+                                productIds += item.id;
+                                productIds+=','
+                                // proudctIds.push(item.id)
+                            }
+                        }
+                        productIds = productIds.substring(0,productIds.length - 1)
+                        temp = {
+                            productIds: productIds
+                        }
+                        console.log(temp)
+                        that.upProduct(temp);
+                    }
+                });
+            },
+            upProduct(data, shopId) {
+                const that = this;
+                Obj.prototype.upProduct(data).then(res => {
+                    let list = res.data.data || [];
                     that.getList();
                 });
             },
@@ -329,6 +398,17 @@
         display: inline-block;
         min-width: 6em;
         text-align: right;
+    }
+    .batch__wrapper {
+        font-size: 12px;
+        color: var(--text-info);
+        padding: 8px 0 0;
+        cursor: default;
+    }
+
+    .batch__wrapper li {
+        display: inline-block;
+        padding-right: 5px;
     }
     .w-4{
         width: 30%;

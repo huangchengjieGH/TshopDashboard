@@ -198,11 +198,28 @@ export default class Product {
         );
     }
 
-    unbindProduct(data, id) {
+    downProduct(data) {
         return Axios({
-            url: '/api/admin/shop/product/unbind?shopId=' + id,
-            method: 'post',
-            data: data
+            url: '/api/admin/product/batch/status/down',
+            method: 'put',
+            params: data
+        }).then(
+            res => {
+                res.data.data = res.data.data || [];
+                let list = res.data.data;
+                list.map(item => {
+                    item.createdAt = dateFormat(item.createdAt);
+                });
+                return Promise.resolve(res);
+            },
+            err => Promise.reject(err)
+        );
+    }
+    upProduct(data) {
+        return Axios({
+            url: '/api/admin/product/batch/status/up',
+            method: 'put',
+            params: data
         }).then(
             res => {
                 res.data.data = res.data.data || [];
