@@ -91,7 +91,7 @@
                         title: '提示',
                         content: '是否删除，请确认',
                         onOk: () => {
-                            let classify = new Classify(obj);
+                            let classify = new Obj(obj);
                             classify.delete().then(() => {
                                 that.classifyList.splice(index, 1);
                             });
